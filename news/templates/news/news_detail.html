@@ -1,0 +1,16 @@
+{% extends 'news/default.html' %}
+
+{% block title %}{{ news.title }}{% endblock %}
+
+{% load censor %}
+
+{% block content %}
+    <article>
+        <h2>{{ news.title|censor }}</h2>
+        <p><strong>Published:</strong> {{ news.created_at|date:"d.m.Y" }}</p>
+        <div>
+            {{ news.content|censor|linebreaks }}
+        </div>
+        <p><a href="{% url 'news_list' %}">Back to news list</a></p>
+    </article>
+{% endblock %}

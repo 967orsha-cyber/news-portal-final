@@ -1,0 +1,17 @@
+{% extends 'news/default.html' %}
+{% load censor %}
+
+{% block content %}
+    <h2>Список новостей</h2>
+    
+    {% for item in news_list %}  
+        <article>
+            <h3><a href="{% url 'news_detail' item.pk %}">{{ item.title|censor }}</a></h3>
+            <p><strong>Дата:</strong> {{ item.created_at|date:"d.m.Y" }}</p>
+            <p>{{ item.content|truncatechars:20|censor }}</p>
+            <hr>
+        </article>
+    {% empty %}
+        <p>Пока нет новостей.</p>
+    {% endfor %}
+{% endblock %}
