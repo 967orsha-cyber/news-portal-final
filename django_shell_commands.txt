@@ -1,0 +1,87 @@
+# === 1. Импорт ===
+from django.contrib.auth.models import User
+from news.models import Author, Category, Post, Comment
+
+# === 2. Создаём пользователей и авторов ===
+user1 = User.objects.create_user('ivan')
+user2 = User.objects.create_user('petr')
+
+author1 = Author.objects.create(user=user1, rating=0)
+author2 = Author.objects.create(user=user2, rating=0)
+print("✓ Созданы авторы: ivan, petr")
+
+# === 3. Создаём категории ===
+cat1 = Category.objects.create(name='Спорт')
+cat2 = Category.objects.create(name='Политика')
+cat3 = Category.objects.create(name='Образование')
+cat4 = Category.objects.create(name='Технологии')
+print("✓ Созданы 4 категории")
+
+# === 4. Создаём статьи и новость ===
+article1 = Post.objects.create(
+    author=author1,
+    post_type=Post.ARTICLE,
+    title='Первая статья о спорте',
+    content='Очень интересная статья о футболе. Редиска — плохой игрок.'
+)
+
+article2 = Post.objects.create(
+    author=author2,
+    post_type=Post.ARTICLE,
+    title='Вторая статья о политике',
+    content='Анализ политической ситуации. Нехороший политик.'
+)
+
+news1 = Post.objects.create(
+    author=author1,
+    post_type=Post.NEWS,
+    title='Новость о технологиях',
+    content='Вышла новая версия Python. Редиска — плохой программист.'
+)
+print("✓ Созданы 2 статьи и 1 новость")
+
+# === 5. Присваиваем категории ===
+article1.categories.add(cat1, cat2)  # Спорт + Политика
+article2.categories.add(cat2)        # Политика
+news1.categories.add(cat4)           # Технологии
+print("✓ Категории присвоены")
+
+# === 6. Создаём комментарии ===
+comment1 = Comment.objects.create(post=article1, user=user1, text='Отличная статья!')
+comment2 = Comment.objects.create(post=article1, user=user2, text='Согласен с автором')
+comment3 = Comment.objects.create(post=news1, user=user2, text='Жду продолжения')
+comment4 = Comment.objects.create(post=article2, user=user1, text='Спорное мнение')
+print("✓ Созданы 4 комментария")
+
+# === 7. Ставим лайки/дислайки ===
+article1.like(); article1.like(); article1.dislike()  # +1
+news1.like(); news1.like(); news1.like()             # +3
+comment1.like(); comment1.like(); comment1.dislike() # +1
+comment2.dislike()                                   # -1
+print("✓ Лайки/дислайки поставлены")
+
+# === 8. Обновляем рейтинги авторов ===
+author1.update_rating()
+author2.update_rating()
+print("✓ Рейтинги авторов обновлены")
+
+# === 9. Лучший автор ===
+best_author = Author.objects.order_by('-rating').values('user__username', 'rating').first()
+print(f"\n📊 ЛУЧШИЙ АВТОР: {best_author}")
+
+# === 10. Лучшая статья ===
+best_post = Post.objects.filter(post_type=Post.ARTICLE).order_by('-rating').first()
+print(f"\n🏆 ЛУЧШАЯ СТАТЬЯ:")
+print(f"   Дата: {best_post.created_at.date()}")
+print(f"   Автор: {best_post.author.user.username}")
+print(f"   Рейтинг: {best_post.rating}")
+print(f"   Заголовок: {best_post.title}")
+print(f"   Превью: {best_post.preview()}")
+
+# === 11. Комментарии к лучшей статье ===
+comments = Comment.objects.filter(post=best_post).order_by('created_at')
+print(f"\n💬 Комментарии к статье '{best_post.title}':")
+for c in comments:
+    print(f"   - {c.created_at.date()}, {c.user.username}, рейтинг {c.rating}: {c.text[:50]}...")
+
+print("\n✅ ВСЁ ВЫПОЛНЕНО!")
