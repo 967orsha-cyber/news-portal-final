@@ -11,11 +11,11 @@
         <div>
             {{ news.content|censor|linebreaks }}
         </div>
-        <p><a href="{% url 'news_list' %}">Back to news list</a></p>
+        <p><a href="{% url 'articles_list' %}">Back to news list</a></p>
         <p>
-    <a href="{% url 'news_edit' news.pk %}">Редактировать</a>
+    <a href="{% url 'article_edit' news.pk %}">Редактировать</a>
     <p>
-    <a href="{% url 'news_delete' news.pk %}">Удалить</a>
+    <a href="{% url 'article_delete' news.pk %}">Удалить</a>
 </p>
 </p>
     </article>

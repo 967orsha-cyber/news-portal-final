@@ -7,7 +7,7 @@
     
     {% for item in news_list %}  
         <article>
-            <h3><a href="{% url 'news_detail' item.pk %}">{{ item.title|censor }}</a></h3>
+            <h3><a href="{% url 'article_detail' item.pk %}">{{ item.title|censor }}</a></h3>
             <p><strong>Дата:</strong> {{ item.created_at|date:"d.m.Y" }}</p>
             <p>{{ item.content|truncatechars:20|censor }}</p>
             <hr>

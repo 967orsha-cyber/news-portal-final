@@ -1,0 +1,59 @@
+{% extends 'news/default.html' %}
+{% load censor %}
+
+{% block title %}Поиск новостей{% endblock %}
+
+{% block content %}
+    <h2>Поиск новостей</h2>
+    
+    <form method="get">
+        {{ filter.form.as_p }}
+        <button type="submit">Найти</button>
+    </form>
+    
+    <hr>
+    
+    {% if filter.qs %}
+        <h3>Результаты: {{ filter.qs|length }}</h3>
+        
+        {% for item in news_list %}
+            <article>
+                <h3><a href="{% url 'news_detail' item.pk %}">{{ item.title|censor }}</a></h3>
+                <p><strong>Автор:</strong> {{ item.author.user.username }}</p>
+                <p><strong>Дата:</strong> {{ item.created_at|date:"d.m.Y" }}</p>
+                <p>{{ item.content|truncatechars:20|censor }}</p>
+                <hr>
+            </article>
+        {% empty %}
+            <p>Новостей по вашему запросу не найдено.</p>
+        {% endfor %}
+        
+        {% if page_obj.has_previous or page_obj.has_next %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1&{{ filter.data.urlencode }}">&laquo; Первая</a>
+                        <a href="?page={{ page_obj.previous_page_number }}&{{ filter.data.urlencode }}">Предыдущая</a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if num == page_obj.number %}
+                            <span class="current">{{ num }}</span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a href="?page={{ num }}&{{ filter.data.urlencode }}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}&{{ filter.data.urlencode }}">Следующая</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}&{{ filter.data.urlencode }}">Последняя &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+        
+    {% else %}
+        <p>Введите критерии поиска.</p>
+    {% endif %}
+    
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'news/default.html' %}
+
+{% block title %}Создание новости{% endblock %}
+
+{% block content %}
+    <h2>Создать новость</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+    </form>
+    
+    <p><a href="{% url 'news_list' %}">← К списку новостей</a></p>
+{% endblock %}
