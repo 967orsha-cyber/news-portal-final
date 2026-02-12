@@ -13,3 +13,16 @@
     </main>
 </body>
 </html>
+
+{% if user.is_authenticated %}
+    <p>Привет, {{ user.username }}!</p>
+    {% if not user.groups.all.0.name == 'authors' %}
+        <a href="{% url 'become_author' %}">Стать автором</a>
+    {% else %}
+        <span>Вы автор</span>
+    {% endif %}
+    <a href="{% url 'account_logout' %}">Выйти</a>
+{% else %}
+    <a href="{% url 'account_login' %}">Войти</a>
+    <a href="{% url 'account_signup' %}">Регистрация</a>
+{% endif %}

@@ -3,7 +3,7 @@ from django.template.defaultfilters import stringfilter
 
 register = template.Library()
 
-BAD_WORDS = ['редиска', 'плохой', 'нехороший']  # список слов
+BAD_WORDS = ['редиска', 'плохой', 'нехороший']  
 
 @register.filter(name='censor')
 @stringfilter

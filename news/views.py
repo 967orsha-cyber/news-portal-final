@@ -3,7 +3,14 @@ from django.urls import reverse_lazy
 from django_filters.views import FilterView
 from .models import Post
 from .filters import PostFilter
-from .forms import NewsForm
+from .forms import NewsForm 
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.contrib.auth.models import Group
+from django.shortcuts import redirect
+from django.views.generic import View
+ 
 
 class NewsUpdate(UpdateView):
     model = Post
@@ -104,3 +111,51 @@ class ArticleDetail(DetailView):
     model = Post
     template_name = 'news/article_detail.html'
     context_object_name = 'article'
+
+class NewsCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = Post
+    form_class = NewsForm
+    template_name = 'news/post_form.html'
+    permission_required = 'news.add_post'
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post_type = 'news'
+        return super().form_valid(form)
+
+class NewsUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = Post
+    form_class = NewsForm
+    template_name = 'news/post_form.html'
+    permission_required = 'news.change_post'
+    
+    def form_valid(self, form):
+        form.instance.post_type = 'news'
+        return super().form_valid(form)
+
+class ArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = Post
+    form_class = NewsForm
+    template_name = 'news/post_form.html'
+    permission_required = 'news.add_post'
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post_type = 'article'
+        return super().form_valid(form)
+
+class ArticleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = Post
+    form_class = NewsForm
+    template_name = 'news/post_form.html'
+    permission_required = 'news.change_post'
+    
+    def form_valid(self, form):
+        form.instance.post_type = 'article'
+        return super().form_valid(form)
+    
+class BecomeAuthor(LoginRequiredMixin, View):
+    def get(self, request):
+        authors_group = Group.objects.get(name='authors')
+        request.user.groups.add(authors_group)
+        return redirect('news_list')

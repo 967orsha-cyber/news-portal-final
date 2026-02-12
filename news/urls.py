@@ -1,8 +1,10 @@
 from django.urls import path
+from .views import BecomeAuthor
 from .views import NewsList, NewsDetail, NewsSearch, NewsCreate, NewsUpdate, NewsDelete
 from .views import ArticleList, ArticleDetail, ArticleCreate, ArticleUpdate, ArticleDelete
 
 urlpatterns = [
+    path('become-author/', BecomeAuthor.as_view(), name='become_author'),
     # Статьи
     path('articles/', ArticleList.as_view(), name='articles_list'),
     path('articles/<int:pk>/', ArticleDetail.as_view(), name='article_detail'),
