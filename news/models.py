@@ -26,6 +26,11 @@ class Author(models.Model):
     
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    subscribers = models.ManyToManyField(
+        User, 
+        related_name='subscribed_categories',
+        blank=True
+    )
     
     def __str__(self):
         return self.name
@@ -45,7 +50,6 @@ class Post(models.Model):
     content = models.TextField()
     rating = models.IntegerField(default=0)
     
-    # Связь с Category через промежуточную модель PostCategory
     categories = models.ManyToManyField(Category, through='PostCategory')
     
     def preview(self):

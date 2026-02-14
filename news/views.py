@@ -10,6 +10,10 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.views.generic import View
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from .models import Category
  
 
 class NewsUpdate(UpdateView):
@@ -159,3 +163,15 @@ class BecomeAuthor(LoginRequiredMixin, View):
         authors_group = Group.objects.get(name='authors')
         request.user.groups.add(authors_group)
         return redirect('news_list')
+    
+class SubscribeToCategoryView(LoginRequiredMixin, View):
+    def post(self, request, category_id):
+        category = get_object_or_404(Category, id=category_id)
+        request.user.subscribed_categories.add(category)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+class UnsubscribeFromCategoryView(LoginRequiredMixin, View):
+    def post(self, request, category_id):
+        category = get_object_or_404(Category, id=category_id)
+        request.user.subscribed_categories.remove(category)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

@@ -5,6 +5,8 @@ from .views import ArticleList, ArticleDetail, ArticleCreate, ArticleUpdate, Art
 
 urlpatterns = [
     path('become-author/', BecomeAuthor.as_view(), name='become_author'),
+    path('category/<int:category_id>/subscribe/', SubscribeToCategoryView.as_view(), name='subscribe_category'),
+    path('category/<int:category_id>/unsubscribe/', UnsubscribeFromCategoryView.as_view(), name='unsubscribe_category'),
     # Статьи
     path('articles/', ArticleList.as_view(), name='articles_list'),
     path('articles/<int:pk>/', ArticleDetail.as_view(), name='article_detail'),

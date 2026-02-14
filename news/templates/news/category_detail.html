@@ -1,0 +1,13 @@
+{% if user.is_authenticated %}
+    {% if category in user.subscribed_categories.all %}
+        <form action="{% url 'unsubscribe_category' category.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Отписаться от рассылки</button>
+        </form>
+    {% else %}
+        <form action="{% url 'subscribe_category' category.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Подписаться на рассылку</button>
+        </form>
+    {% endif %}
+{% endif %}

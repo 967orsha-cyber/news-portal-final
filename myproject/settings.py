@@ -143,7 +143,20 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Allauth specific (Django 6.0+)
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_LOGIN_METHODS = {'email'}  # вход по email
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']  # только email и пароль
+ACCOUNT_LOGIN_METHODS = {'email'}  
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']  
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # для разработки
-ACCOUNT_USERNAME_REQUIRED = False  # username не обязателен
+ACCOUNT_USERNAME_REQUIRED = False  
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # для разработки
+# Для продакшена (пример с Яндекс.Почтой):
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.yandex.ru'
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL = True
+# EMAIL_HOST_USER = 'your-email@yandex.ru'
+# EMAIL_HOST_PASSWORD = 'your-password'
+# DEFAULT_FROM_EMAIL = 'your-email@yandex.ru'
+
+DEFAULT_FROM_EMAIL = 'noreply@newsportal.com'  # отправитель по умолчанию
