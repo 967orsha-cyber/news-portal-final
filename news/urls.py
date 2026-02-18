@@ -2,6 +2,7 @@ from django.urls import path
 from .views import BecomeAuthor
 from .views import NewsList, NewsDetail, NewsSearch, NewsCreate, NewsUpdate, NewsDelete
 from .views import ArticleList, ArticleDetail, ArticleCreate, ArticleUpdate, ArticleDelete
+from .views import SubscribeToCategoryView, UnsubscribeFromCategoryView
 
 urlpatterns = [
     path('become-author/', BecomeAuthor.as_view(), name='become_author'),

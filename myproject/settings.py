@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -152,12 +153,24 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # для разработки
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'твой_логин@yandex.ru'
-EMAIL_HOST_PASSWORD = 'пароль_приложения'
-DEFAULT_FROM_EMAIL = 'твой_логин@yandex.ru'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.yandex.ru'
+#EMAIL_PORT = 465
+#EMAIL_USE_SSL = True
+#EMAIL_HOST_USER = 'твой_логин@yandex.ru'
+#EMAIL_HOST_PASSWORD = 'пароль_приложения'
+#DEFAULT_FROM_EMAIL = 'твой_логин@yandex.ru'
 
-DEFAULT_FROM_EMAIL = 'noreply@newsportal.com'  # отправитель по умолчанию
+DEFAULT_FROM_EMAIL = 'noreply@newsportal.com'  
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BEAT_SCHEDULE = {
+    'send-weekly-newsletter': {
+        'task': 'news.tasks.send_weekly_newsletter_task',
+        'schedule': crontab(day_of_week='monday', hour=8, minute=0),
+    },
+}
