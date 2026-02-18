@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Новая статья в категории {{ category.name }}</title>
+</head>
+<body>
+    <h2>В категории "{{ category.name }}" появилась новая статья!</h2>
+    <h3><a href="{{ site_url }}{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+    <p>{{ post.content|truncatewords:50 }}</p>
+    <p><a href="{{ site_url }}{{ post.get_absolute_url }}">Читать полностью →</a></p>
+    <hr>
+    <p>Если вы не хотите получать такие письма, <a href="{{ site_url }}{% url 'unsubscribe' category.id %}?user={{ user.id }}">отпишитесь от рассылки</a>.</p>
+</body>
+</html>

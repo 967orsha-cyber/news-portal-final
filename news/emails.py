@@ -1,55 +1,80 @@
 from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.conf import settings
-from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth import get_user_model
 
 def send_welcome_email(user):
-    subject = 'Добро пожаловать на наш новостной портал!'
-    message = f'''
-    Здравствуйте, {user.username}!
+    """Приветственное письмо с HTML"""
+    html_content = render_to_string('email/welcome_email.html', {
+        'user': user,
+        'site_url': settings.SITE_URL
+    })
     
-    Вы успешно зарегистрировались на нашем портале.
-    
-    Теперь вы можете:
-    - Читать новости и статьи
-    - Подписываться на категории
-    - Получать еженедельные рассылки
-    
-    С уважением,
-    команда портала
-    '''
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-        fail_silently=False,
+    msg = EmailMultiAlternatives(
+        subject='Добро пожаловать на NewsPortal!',
+        body='',  # пустой текст, только HTML
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[user.email]
     )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 def send_new_post_notification(post):
-    subject = f'Новая статья в категории: {post.category.name}'
+    """Уведомление подписчикам категории"""
+    for category in post.categories.all():
+        subscribers = category.subscribers.all()
+        
+        for user in subscribers:
+            html_content = render_to_string('email/new_post_notification.html', {
+                'post': post,
+                'category': category,
+                'user': user,
+                'site_url': settings.SITE_URL
+            })
+            
+            msg = EmailMultiAlternatives(
+                subject=f'Новая статья в категории {category.name}',
+                body='',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[user.email]
+            )
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+def send_weekly_newsletter():
+    """Еженедельная рассылка"""
+    from django.utils import timezone
+    from datetime import timedelta
+    from django.contrib.auth import get_user_model
     
-    for subscriber in post.category.subscribers.all():
-        message = f'''
-        Здравствуйте, {subscriber.username}!
+    User = get_user_model()
+    week_ago = timezone.now() - timedelta(days=7)
+    
+    for user in User.objects.filter(is_active=True):
+        # Собираем новые посты из категорий, на которые подписан пользователь
+        subscribed_categories = user.subscribed_categories.all()
+        categories_with_posts = {}
         
-        В категории "{post.category.name}" появилась новая статья:
+        for category in subscribed_categories:
+            new_posts = category.posts.filter(created_at__gte=week_ago)
+            if new_posts.exists():
+                categories_with_posts[category] = new_posts
         
-        {post.title}
-        
-        Краткое содержание:
-        {post.content[:200]}...
-        
-        Ссылка на статью: 
-        http://127.0.0.1:8000{reverse('news_detail', args=[post.id])}
-        
-        С уважением,
-        команда портала
-        '''
-        
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [subscriber.email],
-            fail_silently=False,
-        )
+        if categories_with_posts:
+            html_content = render_to_string('email/weekly_newsletter.html', {
+                'user': user,
+                'categories_with_posts': categories_with_posts,
+                'site_url': settings.SITE_URL
+            })
+            
+            msg = EmailMultiAlternatives(
+                subject='Еженедельная рассылка NewsPortal',
+                body='',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[user.email]
+            )
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()

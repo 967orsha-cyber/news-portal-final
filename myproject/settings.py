@@ -62,7 +62,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # 👈 ВОТ ТАК!
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,6 +127,8 @@ STATIC_URL = 'static/'
 # Allauth settings
 SITE_ID = 1
 
+SITE_URL = 'http://127.0.0.1:8000'  # для разработки
+
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -150,13 +152,12 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # для разработки
-# Для продакшена (пример с Яндекс.Почтой):
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.yandex.ru'
-# EMAIL_PORT = 465
-# EMAIL_USE_SSL = True
-# EMAIL_HOST_USER = 'your-email@yandex.ru'
-# EMAIL_HOST_PASSWORD = 'your-password'
-# DEFAULT_FROM_EMAIL = 'your-email@yandex.ru'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'твой_логин@yandex.ru'
+EMAIL_HOST_PASSWORD = 'пароль_приложения'
+DEFAULT_FROM_EMAIL = 'твой_логин@yandex.ru'
 
 DEFAULT_FROM_EMAIL = 'noreply@newsportal.com'  # отправитель по умолчанию
