@@ -14,6 +14,39 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import Category
+from django.core.cache import cache
+
+class CacheDetailMixin:
+    """
+    Миксин для кеширования детальной страницы объекта
+    Использование: class NewsDetail(CacheDetailMixin, DetailView):
+    """
+    cache_timeout = 60 * 15  # 15 минут по умолчанию
+    
+    def get_object(self, queryset=None):
+        # Формируем ключ кеша: модель_класс_первичныйключ
+        obj_id = self.kwargs.get('pk')
+        cache_key = f"{self.model.__name__.lower()}_detail_{obj_id}"
+        
+        # Пробуем получить из кеша
+        obj = cache.get(cache_key)
+        
+        if not obj:
+            # Если нет в кеше — грузим из БД
+            obj = super().get_object(queryset)
+            cache.set(cache_key, obj, self.cache_timeout)
+            self.from_cache = False
+            print(f"{self.model.__name__} {obj_id} загружен из БД и закеширован")
+        else:
+            self.from_cache = True
+            print(f"{self.model.__name__} {obj_id} загружен из КЕША")
+        
+        return obj
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['from_cache'] = getattr(self, 'from_cache', False)
+        return context
  
 
 class NewsUpdate(UpdateView):
@@ -36,18 +69,22 @@ class ArticleUpdate(UpdateView):
         form.instance.post_type = 'AR'  
         return super().form_valid(form)
     
-class NewsDelete(DeleteView):
+class NewsDelete(CacheDetailMixin, DeleteView):
     model = Post
     template_name = 'news/news_delete.html'
     success_url = reverse_lazy('news_list')
+    context_object_name = 'news'
+    # Если нужно своё время кеша:
+    # cache_timeout = 60 * 30  # 30 минут
     
     def get_queryset(self):
         return Post.objects.filter(post_type=Post.NEWS)
     
-class ArticleDelete(DeleteView):
+class ArticleDelete(CacheDetailMixin, DeleteView):
     model = Post
     template_name = 'news/article_delete.html'
     success_url = reverse_lazy('articles_list')
+    context_object_name = 'article'
     
     def get_queryset(self):
         return Post.objects.filter(post_type=Post.ARTICLE)
