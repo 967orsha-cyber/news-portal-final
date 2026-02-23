@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ bulletin.title }}</title>
+</head>
+<body>
+    <h1>{{ bulletin.title }}</h1>
+    <p>Категория: {{ bulletin.category.get_name_display }}</p>
+    <p>Автор: {{ bulletin.author.username }}</p>
+    <p>Дата: {{ bulletin.created_at|date:"d.m.Y H:i" }}</p>
+
+    {% if bulletin.author == user %}
+        <p><a href="{% url 'bulletin_edit' bulletin.id %}">✏️ Редактировать</a></p>
+    {% endif %}
+    
+    <hr>
+    <div>
+        {{ bulletin.content|safe }}
+    </div>
+    
+    <p><a href="{% url 'bulletin_list' %}">← К списку объявлений</a></p>
+
+    {% if user.is_authenticated %}
+        <h3>Оставить отклик</h3>
+        <form method="post" action="{% url 'response_create' bulletin.id %}">
+            {% csrf_token %}
+            {{ response_form.as_p }}
+            <button type="submit">Отправить</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'account_login' %}">Войдите</a>, чтобы оставить отклик.</p>
+    {% endif %}
+
+</body>
+</html>

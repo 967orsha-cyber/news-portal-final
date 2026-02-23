@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}News & Bulletin{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        nav { background: #333; padding: 10px; margin-bottom: 20px; }
+        nav a { color: white; margin-right: 15px; text-decoration: none; }
+        nav a:hover { text-decoration: underline; }
+        .user-info { float: right; color: white; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'news_list' %}">📰 Новости</a>
+        <a href="{% url 'bulletin_list' %}">📢 Объявления</a>
+        
+        <span class="user-info">
+            {% if user.is_authenticated %}
+                Привет, {{ user.username }}! |
+                <a href="{% url 'my_responses' %}" style="color: #ffc107;">📬 Отклики</a> |
+                <a href="{% url 'account_logout' %}" style="color: white;">Выйти</a>
+            {% else %}
+                <a href="{% url 'account_login' %}" style="color: white;">Войти</a> |
+                <a href="{% url 'account_signup' %}" style="color: white;">Регистрация</a>
+            {% endif %}
+        </span>
+    </nav>
+    
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

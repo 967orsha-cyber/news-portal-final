@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Удаление отклика</title>
+</head>
+<body>
+    <h1>Удаление отклика</h1>
+    
+    <p>Вы уверены, что хотите удалить этот отклик?</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Да, удалить</button>
+        <a href="{% url 'my_responses' %}">Отмена</a>
+    </form>
+</body>
+</html>

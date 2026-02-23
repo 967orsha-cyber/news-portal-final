@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Оставить отклик</title>
+</head>
+<body>
+    <h1>Оставить отклик на "{{ bulletin.title }}"</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+    
+    <p><a href="{% url 'bulletin_detail' bulletin.id %}">← Назад к объявлению</a></p>
+</body>
+</html>

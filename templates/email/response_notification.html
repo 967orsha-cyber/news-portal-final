@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Новый отклик</title>
+</head>
+<body>
+    <h2>Здравствуйте, {{ bulletin.author.username }}!</h2>
+    
+    <p>На ваше объявление <strong>"{{ bulletin.title }}"</strong> поступил новый отклик:</p>
+    
+    <div style="background: #f5f5f5; padding: 15px; margin: 15px 0;">
+        <p><strong>Автор:</strong> {{ response.author.username }}</p>
+        <p><strong>Текст:</strong> {{ response.text }}</p>
+        <p><strong>Дата:</strong> {{ response.created_at|date:"d.m.Y H:i" }}</p>
+    </div>
+    
+    <p>
+        <a href="{{ site_url }}{% url 'bulletin_detail' bulletin.id %}">Перейти к объявлению</a> |
+        <a href="{{ site_url }}{% url 'my_responses' %}">Все отклики</a>
+    </p>
+    
+    <hr>
+    <p>С уважением,<br>Команда сервера</p>
+</body>
+</html>

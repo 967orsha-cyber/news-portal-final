@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мои отклики</title>
+    <style>
+        .response { border: 1px solid #ccc; margin: 10px 0; padding: 10px; }
+        .accepted { background-color: #d4edda; }
+        .filter-form { margin: 20px 0; padding: 10px; background: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <h1>Отклики на мои объявления</h1>
+    
+    <div class="filter-form">
+        <form method="get">
+            <label for="bulletin">Фильтр по объявлению:</label>
+            <select name="bulletin" id="bulletin">
+                <option value="">Все объявления</option>
+                {% for bulletin in my_bulletins %}
+                    <option value="{{ bulletin.id }}" {% if request.GET.bulletin == bulletin.id|stringformat:"s" %}selected{% endif %}>
+                        {{ bulletin.title }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Применить</button>
+        </form>
+    </div>
+    
+    {% if responses %}
+        {% for response in responses %}
+            <div class="response {% if response.accepted %}accepted{% endif %}">
+                <p><strong>Объявление:</strong> <a href="{% url 'bulletin_detail' response.bulletin.id %}">{{ response.bulletin.title }}</a></p>
+                <p><strong>Автор отклика:</strong> {{ response.author.username }}</p>
+                <p><strong>Дата:</strong> {{ response.created_at|date:"d.m.Y H:i" }}</p>
+                <p><strong>Текст:</strong> {{ response.text }}</p>
+                <p>
+                    {% if not response.accepted %}
+                        <a href="{% url 'response_accept' response.id %}">✅ Принять</a> |
+                    {% else %}
+                        <span>✅ Принят</span> |
+                    {% endif %}
+                    <a href="{% url 'response_delete' response.id %}" onclick="return confirm('Удалить отклик?')">🗑️ Удалить</a>
+                </p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Пока нет откликов на ваши объявления.</p>
+    {% endif %}
+    
+    <p><a href="{% url 'bulletin_list' %}">← К списку объявлений</a></p>
+</body>
+</html>

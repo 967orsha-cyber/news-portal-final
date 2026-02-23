@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Все объявления{% endblock %}
+
+{% block content %}
+    <h1>Все объявления</h1>
+    <p><a href="{% url 'my_responses' %}">📬 Мои отклики</a></p>
+    <p><a href="{% url 'bulletin_create' %}">➕ Создать объявление</a></p>
+    
+    <ul>
+    {% for bulletin in bulletins %}
+        <li>
+            <a href="{% url 'bulletin_detail' bulletin.id %}">
+                {{ bulletin.title }}
+            </a>
+            - {{ bulletin.get_category_display }} 
+            - {{ bulletin.author.username }}
+            - {{ bulletin.created_at|date:"d.m.Y" }}
+        </li>
+    {% empty %}
+        <li>Пока нет объявлений</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
