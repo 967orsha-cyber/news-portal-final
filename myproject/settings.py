@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
     'news',
+    'bulletin',
+    'ckeditor',
+    'ckeditor_uploader',
+    'django.contrib.flatpages',
 ]
 
 MIDDLEWARE = [
@@ -65,7 +69,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # 👈 ВОТ ТАК!
+        'DIRS': [BASE_DIR / 'templates'],  
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -150,7 +154,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGIN_METHODS = {'email'}  
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']  
-ACCOUNT_EMAIL_VERIFICATION = 'none'  # для разработки
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3  
 ACCOUNT_USERNAME_REQUIRED = False  
 
 # Email settings
@@ -331,3 +338,14 @@ LOGGING = {
         },
     },
 }
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+    },
+}
+
+SITE_ID = 1

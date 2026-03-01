@@ -1,41 +1,16 @@
-{% extends 'news/default.html' %}
-{% load censor %}
+{% extends "base.html" %}
+
+{% block title %}Новости{% endblock %}
 
 {% block content %}
-
-    <h2>Список новостей</h2>
+    <h1>Список новостей</h1>
     
-    {% for item in news_list %}  
-        <article>
-            <h3><a href="{% url 'news_detail' item.pk %}">{{ item.title|censor }}</a></h3>
-            <p><strong>Дата:</strong> {{ item.created_at|date:"d.m.Y" }}</p>
-            <p>{{ item.content|truncatechars:20|censor }}</p>
-            <hr>
-        </article>
+    {% for news in news_list %}
+        <h2>{{ news.title }}</h2>
+        <p>Дата: {{ news.created_at|date:"d.m.Y" }}</p>
+        <p>{{ news.content|truncatewords:20 }}</p>
+        <hr>
     {% empty %}
-        <p>Пока нет новостей.</p>
+        <p>Новостей пока нет</p>
     {% endfor %}
-        {% if page_obj.has_previous or page_obj.has_next %}
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page=1">&laquo; Первая</a>
-                    <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
-                {% endif %}
-
-                {% for num in page_obj.paginator.page_range %}
-                    {% if num == page_obj.number %}
-                        <span class="current">{{ num }}</span>
-                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <a href="?page={{ num }}">{{ num }}</a>
-                    {% endif %}
-                {% endfor %}
-
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
-    {% endif %}
 {% endblock %}
